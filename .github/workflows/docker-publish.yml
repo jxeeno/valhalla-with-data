@@ -58,9 +58,6 @@ jobs:
           curl "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf" > custom_files/australia-latest.osm.pbf
           docker run -v $PWD/custom_files:/custom_files -e serve_tiles=False ghcr.io/gis-ops/docker-valhalla/valhalla:latest
           ls -l custom_files
-          echo "Delete tiles in folder structure"
-          rm -rf custom_files/valhalla_tiles
-          ls -l custom_files
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
