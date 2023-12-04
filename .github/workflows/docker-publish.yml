@@ -63,7 +63,7 @@ jobs:
           curl -H "Authorization: apikey $TFNSW_API_KEY" "https://api.transport.nsw.gov.au/v1/publictransport/timetables/complete/gtfs" > gtfs_feeds/au2_complete_gtfs.zip
           ls -l custom_files
           ls -l gtfs_feeds
-          docker run -v $PWD/custom_files:/custom_files -v $PWD/gtfs_feeds:/gtfs_feeds -e build_transit=True -e serve_tiles=False ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+          docker run -v $PWD/custom_files:/custom_files -v $PWD/gtfs_feeds:/gtfs_feeds -e build_time_zones=True -e build_admins=True -e build_transit=True -e serve_tiles=False ghcr.io/gis-ops/docker-valhalla/valhalla:latest
           ls -l custom_files
           sudo rm -rf custom_files/valhalla_tiles
           ls -l custom_files
