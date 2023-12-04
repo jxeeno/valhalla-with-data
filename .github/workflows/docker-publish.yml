@@ -9,7 +9,7 @@ on:
   schedule:
     - cron: '36 9 * * *'
   push:
-    branches: [ "main" ]
+    branches: [ "main", "gtfs" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
@@ -59,7 +59,7 @@ jobs:
           mkdir gtfs_feeds
           echo "Fetch PBF from Geofabrik"
           curl "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf" > custom_files/australia-latest.osm.pbf
-          curl -H "Authorization: \"apikey $TFNSW_API_KEY\"" "https://api.transport.nsw.gov.au/v1/publictransport/timetables/complete/gtfs" > gtfs_feeds/au2_complete_gtfs.zip
+          curl -H "Authorization: apikey $TFNSW_API_KEY" "https://api.transport.nsw.gov.au/v1/publictransport/timetables/complete/gtfs" > gtfs_feeds/au2_complete_gtfs.zip
           ls -l custom_files
           ls -l gtfs_feeds
           docker run -v $PWD/custom_files:/custom_files -v $PWD/gtfs_feeds:/gtfs_feeds -e serve_tiles=False ghcr.io/gis-ops/docker-valhalla/valhalla:latest
