@@ -56,18 +56,18 @@ jobs:
           TFNSW_API_KEY: ${{ secrets.TFNSW_API_KEY }}
         run: |
           mkdir custom_files
-          mkdir transit_tiles
+          mkdir custom_files/transit_tiles
           mkdir gtfs_feeds
           echo "Fetch PBF from Geofabrik"
           curl "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf" > custom_files/australia-latest.osm.pbf
           curl -H "Authorization: apikey $TFNSW_API_KEY" "https://api.transport.nsw.gov.au/v1/publictransport/timetables/complete/gtfs" > gtfs_feeds/au2_complete_gtfs.zip
           ls -l custom_files
           ls -l gtfs_feeds
-          docker run -v $PWD/custom_files:/custom_files -v $PWD/gtfs_feeds:/gtfs_feeds -v $PWD/transit_tiles:/transit_tiles -e serve_tiles=False ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+          docker run -v $PWD/custom_files:/custom_files -v $PWD/gtfs_feeds:/gtfs_feeds -e serve_tiles=False ghcr.io/gis-ops/docker-valhalla/valhalla:latest
           ls -l custom_files
           sudo rm -rf custom_files/valhalla_tiles
           ls -l custom_files
-          ls -l transit_tiles
+          ls -l custom_files/transit_tiles
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
