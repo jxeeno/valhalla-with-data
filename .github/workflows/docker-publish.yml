@@ -61,10 +61,12 @@ jobs:
           sudo rm -rf custom_files/valhalla_tiles
           echo "Before updating config...\n\n"
           cat custom_files/valhalla.json
-          jq '.service_limits.trace.max_distance = 500000' custom_files/valhalla.json > custom_files/valhalla.json
-          jq '.service_limits.trace.max_shape = 32000' custom_files/valhalla.json > custom_files/valhalla.json
+          cp custom_files/valhalla.json /tmp/valhalla.json
+          jq '.service_limits.trace.max_distance = 500000' /tmp/valhalla.json > /tmp/valhalla.json
+          jq '.service_limits.trace.max_shape = 32000' /tmp/valhalla.json > /tmp/valhalla.json
           echo "After updating config...\n\n"
-          cat custom_files/valhalla.json
+          cat /tmp/valhalla.json
+          sudo mv /tmp/valhalla.json custom_files/valhalla.json
           ls -l custom_files
 
       # Login against a Docker registry except on PR
