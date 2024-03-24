@@ -59,6 +59,12 @@ jobs:
           docker run -v $PWD/custom_files:/custom_files -e serve_tiles=False ghcr.io/gis-ops/docker-valhalla/valhalla:3.4.0
           ls -l custom_files
           sudo rm -rf custom_files/valhalla_tiles
+          echo "Before updating config...\n\n"
+          cat custom_files/valhalla.json
+          jq '.service_limits.trace.max_distance = 500000' custom_files/valhalla.json > custom_files/valhalla.json
+          jq '.service_limits.trace.max_shape = 32000' custom_files/valhalla.json > custom_files/valhalla.json
+          echo "After updating config...\n\n"
+          cat custom_files/valhalla.json
           ls -l custom_files
 
       # Login against a Docker registry except on PR
