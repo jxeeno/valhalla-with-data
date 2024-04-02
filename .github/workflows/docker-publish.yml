@@ -6,15 +6,14 @@ name: Docker
 # documentation.
 
 on:
-  workflow_dispatch:
-    inputs:
-      service:
-        description: 'Service to deploy'
-        required: true
-        default: 'default' 
-        type: choice
-        options:
-        - default
+  schedule:
+    - cron: '36 9 * * *'
+  push:
+    branches: [ "main" ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   # Use docker.io for Docker Hub if empty
