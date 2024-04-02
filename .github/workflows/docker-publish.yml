@@ -6,14 +6,15 @@ name: Docker
 # documentation.
 
 on:
-  schedule:
-    - cron: '36 9 * * *'
-  push:
-    branches: [ "main" ]
-    # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to deploy'
+        required: true
+        default: 'default' 
+        type: choice
+        options:
+        - default
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -24,7 +25,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -114,3 +114,36 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq unzip
+      - name: Install AWS Client
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install || true
+          aws --version
+          curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "lightsailctl"
+          sudo mv "lightsailctl" "/usr/local/bin/lightsailctl"
+          sudo chmod +x /usr/local/bin/lightsailctl
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Deploy
+        run: |
+          aws lightsail get-container-service-deployments --service-name ${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }} | jq --raw-output "[.deployments | .[] | select(.state==\"ACTIVE\")][0]" | jq --raw-output '{containers, publicEndpoint}' > deployment.json
+          aws lightsail create-container-service-deployment --service-name ${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }} --cli-input-json file://$(pwd)/deployment.json
