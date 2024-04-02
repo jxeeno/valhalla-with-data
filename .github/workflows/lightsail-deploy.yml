@@ -48,5 +48,5 @@ jobs:
           node-version: 18
       - name: Deploy
         run: |
-          aws lightsail get-container-service-deployments --service-name ${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }} | jq --raw-output "[.deployments | .[] | select(.state==\"ACTIVE\")][0]" > deployment.json
+          aws lightsail get-container-service-deployments --service-name ${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }} | jq --raw-output "[.deployments | .[] | select(.state==\"ACTIVE\")][0]" | jq --raw-output '{containers, publicEndpoint}' > deployment.json
           aws lightsail create-container-service-deployment --service-name ${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }} --cli-input-json file://$(pwd)/deployment.json
