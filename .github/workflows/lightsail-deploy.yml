@@ -15,7 +15,8 @@ on:
         type: choice
         options:
         - default
-
+env:
+  AWS_REGION: ap-southeast-2
 jobs:
   deploy:
     name: Deploy
