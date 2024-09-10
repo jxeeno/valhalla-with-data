@@ -6,6 +6,15 @@ name: Docker
 # documentation.
 
 on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to deploy'
+        required: true
+        default: 'default' 
+        type: choice
+        options:
+        - default
   schedule:
     - cron: '36 9 * * *'
   push:
