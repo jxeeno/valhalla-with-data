@@ -1,26 +1,32 @@
 import osmium
 import sys
+import json
+import logging
 
-OVERRIDE_GROUPS = [
-    {
-        "way_ids": [
-          1135684894, 24210972, 511190501, 652167419, 836638129, 144053760,
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(levelname)s] %(message)s'
+)
 
-          198994800, 198994809
-        ],
-        "tags": {"highway": "motorway_link", "name": ""}
-    },
-    {
-        "way_ids": [11111111],
-        "tags": {"access": "no"}
-    }
-]
-
-# Build a map from way_id to tag overrides for fast lookup
 WAY_TAG_OVERRIDES = {}
-for group in OVERRIDE_GROUPS:
-    for way_id in group["way_ids"]:
-        WAY_TAG_OVERRIDES[way_id] = group["tags"]
+ALL_TARGET_IDS = set()
+FOUND_IDS = set()
+MODIFIED_COUNT = 0
+TOTAL_WAYS = 0
+
+def load_override_config(json_path):
+    global WAY_TAG_OVERRIDES, ALL_TARGET_IDS
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        override_groups = json.load(f)
+
+    for group in override_groups:
+        way_ids = group.get("way_ids", [])
+        tags = group.get("tags", {})
+        for way_id in way_ids:
+            WAY_TAG_OVERRIDES[way_id] = tags
+            ALL_TARGET_IDS.add(way_id)
 
 class WayModifier(osmium.SimpleHandler):
     def __init__(self):
@@ -31,18 +37,24 @@ class WayModifier(osmium.SimpleHandler):
         self.writer = writer
 
     def way(self, w):
+        global MODIFIED_COUNT, TOTAL_WAYS
+    
+        TOTAL_WAYS += 1
         if w.id in WAY_TAG_OVERRIDES:
-            tags_dict = dict(w.tags)
+            FOUND_IDS.add(w.id)
             override_tags = WAY_TAG_OVERRIDES[w.id]
+    
+            # Start with original tags
+            tags_dict = dict(w.tags)
             tags_dict.update(override_tags)
-
-            # Build a new OSM way with overridden tags
+    
+            # Create a new mutable way and set updated tags
             new_way = osmium.osm.mutable.Way(w)
-            new_way.tags = osmium.osm.TagList()
-            for k, v in tags_dict.items():
-                new_way.tags.add(k, v)
-
+            new_way.tags = [(k, v) for k, v in tags_dict.items()]
+    
             self.writer.add_way(new_way)
+            MODIFIED_COUNT += 1
+            logging.debug(f"Modified way_id={w.id} with tags {override_tags}")
         else:
             self.writer.add_way(w)
 
@@ -53,18 +65,36 @@ class WayModifier(osmium.SimpleHandler):
         self.writer.add_relation(r)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python apply_tag_overrides.py input.pbf output.pbf")
+    if len(sys.argv) != 4:
+        print("Usage: python apply_tag_overrides.py input.pbf output.pbf tag_overrides.json")
         sys.exit(1)
 
     input_file = sys.argv[1]
     output_file = sys.argv[2]
+    config_file = sys.argv[3]
+
+    load_override_config(config_file)
 
     handler = WayModifier()
     writer = osmium.SimpleWriter(output_file)
+
+    logging.info(f"Processing input file: {input_file}")
+    logging.info(f"Output will be written to: {output_file}")
+    logging.info(f"Loaded tag overrides from: {config_file}")
+    logging.info(f"Total target way_ids: {len(ALL_TARGET_IDS)}")
 
     try:
         handler.apply_writer(writer)
         handler.apply_file(input_file, locations=False)
     finally:
         writer.close()
+
+    MISSING_IDS = ALL_TARGET_IDS - FOUND_IDS
+    logging.info(f"Total ways processed: {TOTAL_WAYS}")
+    logging.info(f"Total ways modified: {MODIFIED_COUNT}")
+    if MISSING_IDS:
+        logging.warning(f"{len(MISSING_IDS)} way_ids from config not found in input PBF:")
+        for wid in sorted(MISSING_IDS):
+            logging.warning(f"  Missing way_id: {wid}")
+    else:
+        logging.info("All target way_ids were found and modified.")
