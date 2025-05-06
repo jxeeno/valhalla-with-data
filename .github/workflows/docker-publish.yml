@@ -65,7 +65,7 @@ jobs:
           echo "Fetch PBF from Geofabrik"
           curl "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf" > tmp.osm.pbf
           pip install osmium
-          python apply_tag_overrides.py tmp.osm.pbf out.osm.pbf
+          python apply_tag_overrides.py tmp.osm.pbf out.osm.pbf modifications.json
           mv out.osm.pbf custom_files/australia-latest.osm.pbf
           docker run -v $PWD/custom_files:/custom_files -e serve_tiles=False ghcr.io/gis-ops/docker-valhalla/valhalla:3.4.0
           ls -l custom_files
