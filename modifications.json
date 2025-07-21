@@ -40,10 +40,10 @@
         },
         {
                 "way_ids": [1381345115, 1381345118],
-                "tags": {"bus:lanes:backward": "yes|yes|yes"}
+                "tags": {"bus:lanes:backward": "yes|yes|yes", "lanes:bus": null}
         },
         {
                 "way_ids": [1311768435],
-                "tags": {"bus:lanes:backward": "designated|yes|yes"}
+                "tags": {"bus:lanes:backward": "designated|yes|yes", "lanes:bus": null}
         }
 ]
