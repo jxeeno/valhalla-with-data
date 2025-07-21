@@ -47,7 +47,7 @@
                 "tags": {"bus:lanes:backward": "designated|yes|yes", "lanes:bus": ""}
         },
         {
-                "way_ids": [4883970],
+                "way_ids": [4883970, 1381345119],
                 "tags": {"lanes:bus": ""}
         }
 ]
