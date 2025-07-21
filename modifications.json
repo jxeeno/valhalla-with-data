@@ -37,5 +37,13 @@
                         
                 ],
                 "tags": {"highway": "motorway_link"}
+        },
+        {
+                "way_ids": [1381345115, 1381345118],
+                "tags": {"bus:lanes:backward": "yes|yes|yes"}
+        },
+        {
+                "way_ids": [1311768435],
+                "tags": {"bus:lanes:backward": "designated|yes|yes"}
         }
 ]
