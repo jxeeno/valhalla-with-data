@@ -49,5 +49,14 @@
         {
                 "way_ids": [4883970, 1381345119],
                 "tags": {"lanes:bus": ""}
+        },
+        {
+                "way_ids": [94687105],
+                "tags": {"bus": "no"},
+                "note": "Buses must access via Arrivals, not Departures"
+        },
+        {
+                "way_ids": [1242454109],
+                "tags": {"name": "Fitzgerald Avenue"}
         }
 ]
