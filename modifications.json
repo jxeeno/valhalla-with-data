@@ -58,5 +58,9 @@
         {
                 "way_ids": [1242454109],
                 "tags": {"name": "Fitzgerald Avenue"}
+        },
+        {
+                "way_ids": [1423706527],
+                "tags": {"oneway": "no"}
         }
 ]
