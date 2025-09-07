@@ -63,7 +63,7 @@ jobs:
         run: |
           mkdir custom_files
           echo "Fetch PBF from Geofabrik"
-          curl -v "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf" > tmp.osm.pbf
+          curl -v -H "User-Agent: valhalla-with-data/1.0" "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf" > tmp.osm.pbf
           pip install osmium
           python apply_tag_overrides.py tmp.osm.pbf out.osm.pbf modifications.json
           mv out.osm.pbf custom_files/australia-latest.osm.pbf
