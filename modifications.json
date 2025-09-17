@@ -67,5 +67,10 @@
         {
                 "way_ids": [1423706527],
                 "tags": {"oneway": "no"}
+        },
+        {
+                "way_ids": [23632254, 255868975, 255870047, 1322112149],
+                "tags": {"highway": "residential"},
+                "note": "Per CS 172047482 for Bankstown opening, remove after 30-09-2025"
         }
 ]
