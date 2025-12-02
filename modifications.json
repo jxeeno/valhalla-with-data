@@ -25,7 +25,7 @@
                         10590673, 1125804807, 10590697, 36432485, 244428243, 10590729, 10590629,
                         17493382,
                         18099375,
-                        10593278, 32837538
+                        10593278
                 ],
                 "tags": {"highway": "motorway_link", "name": ""}
         },
@@ -82,8 +82,8 @@
                 "tags": {"name": "Sandgate Road On-ramp", "destination": "City", "destination:ref" :"26"}
         },
         {
-                "way_ids": [32837538],
-                "tags": {"destination:forward": "Ernie's Roundabout", "highway": "motorway_link", "name": ""}
+                "way_ids": [32837538, 342871834],
+                "tags": {"highway": "motorway_link", "name": ""}
         },
         {
                 "way_ids": [106864651, 106864649],
