@@ -69,8 +69,7 @@
                 "tags": {"oneway": "no"}
         },
         {
-                "way_ids": [1104384358],
-                "tags": {"highway": "motorway_junction"},
-                "note": "Issue 12, guidance provided does call out need to keep right"
+                "way_ids": [82078763],
+                "tags": {"highway": "motorway_junction"}
         }
 ]
