@@ -20,10 +20,10 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'Dockerfile'
+      - 'tagged.Dockerfile'
       - 'apply_tag_overrides.py'
       - 'modifications.json'
-      - '.github/workflows/docker-publish-v2.yml'
+      - '.github/workflows/docker-publish-tag.yml'
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
