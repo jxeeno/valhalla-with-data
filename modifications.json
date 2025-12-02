@@ -69,7 +69,7 @@
                 "tags": {"oneway": "no"}
         },
         {
-                "way_ids": [82078763, 26337594, 7156298040],
+                "node_ids": [82078763, 26337594, 7156298040],
                 "tags": {"highway": "motorway_junction"}
         },
         {
@@ -83,18 +83,19 @@
         },
         {
                 "way_ids": [32837538],
-                "tags": {"destination:forward": "Ernie's Roundabout"}
+                "tags": {"destination:forward": "Ernie's Roundabout", "highway": "motorway_link", "name": ""}
         },
         {
                 "way_ids": [106864651],
-                "tags": {"destination": "Royal Brisbane and Women's Hospital"}
+                "tags": {"destination": "Royal Brisbane and Women's Hospital", "highway": "motorway_link", "name": ""}
         },
         {
                 "way_ids": [106864657],
-                "tags": {"destination": "Butterfield Street"}
+                "tags": {"destination": "Butterfield Street", "highway": "motorway_link", "name": ""}
         },
         {
                 "way_ids": [25505541],
-                "tags": {"name": "Taigum Interchange Service Road"}
+                "tags": {"name": "Taigum Interchange Service Road"},
+                "note": "Issue 59, Taigum Interchange Service Road not named"
         }
 ]
