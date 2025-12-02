@@ -84,5 +84,13 @@
         {
                 "way_ids": [32837538],
                 "tags": {"destination:forward": "Ernie's Roundabout"}
+        },
+        {
+                "way_ids": [106864651],
+                "tags": {"destination": "Royal Brisbane and Women's Hospital"}
+        },
+        {
+                "way_ids": [106864657],
+                "tags": {"destination": "Butterfield Street"}
         }
 ]
