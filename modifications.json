@@ -56,7 +56,7 @@
                 "tags": {"lanes:bus": ""}
         },
         {
-                "way_ids": [94687105],
+                "node_ids": [26337594],
                 "tags": {"bus": "no"},
                 "note": "Buses must access via Arrivals, not Departures"
         },
@@ -70,7 +70,7 @@
         },
         {
                 "way_ids": [1104384358],
-                "tags": {"name": "", "ref": ""},
+                "tags": {"highway": "motorway_junction"},
                 "note": "Issue 12, guidance provided does call out need to keep right"
         }
 ]
