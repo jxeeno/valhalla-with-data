@@ -71,5 +71,10 @@
         {
                 "way_ids": [82078763, 26337594],
                 "tags": {"highway": "motorway_junction"}
+        },
+        {
+                "way_ids": [377084201, 899871429, 377084200, 106864649],
+                "tags": {"junction": "circular"},
+                "note": "Issue 27, Ernies roundabout no nav instructions"
         }
 ]
