@@ -69,11 +69,11 @@
                 "tags": {"oneway": "no"}
         },
         {
-                "node_ids": [82078763, 26337594, 7156298040],
+                "node_ids": [82078763, 26337594, 7156298040, 7156298117],
                 "tags": {"highway": "motorway_junction"}
         },
         {
-                "way_ids": [377084201, 899871429, 377084200, 106864649],
+                "way_ids": [377084201, 899871429, 377084200],
                 "tags": {"junction": "circular"},
                 "note": "Issue 27, Ernies roundabout no nav instructions"
         },
@@ -86,7 +86,7 @@
                 "tags": {"destination:forward": "Ernie's Roundabout", "highway": "motorway_link", "name": ""}
         },
         {
-                "way_ids": [106864651],
+                "way_ids": [106864651, 106864649],
                 "tags": {"destination": "Royal Brisbane and Women's Hospital", "highway": "motorway_link", "name": ""}
         },
         {
