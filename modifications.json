@@ -83,7 +83,7 @@
         },
         {
                 "way_ids": [32837538, 342871834],
-                "tags": {"highway": "motorway_link", "name": ""}
+                "tags": {"highway": "motorway_link"}
         },
         {
                 "way_ids": [106864651, 106864649],
