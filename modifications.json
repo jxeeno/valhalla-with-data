@@ -92,5 +92,9 @@
         {
                 "way_ids": [106864657],
                 "tags": {"destination": "Butterfield Street"}
+        },
+        {
+                "way_ids": [25505541],
+                "tags": {"name": "Taigum Interchange Service Road"}
         }
 ]
