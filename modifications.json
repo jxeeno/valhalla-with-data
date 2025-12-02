@@ -76,5 +76,9 @@
                 "way_ids": [377084201, 899871429, 377084200, 106864649],
                 "tags": {"junction": "circular"},
                 "note": "Issue 27, Ernies roundabout no nav instructions"
+        },
+        {
+                "way_ids": [1126814304, 790466481],
+                "tags": {"name": "Sandgate Road On-ramp", "destination": "City", "destination:ref" :"26"}
         }
 ]
