@@ -56,7 +56,7 @@
                 "tags": {"lanes:bus": ""}
         },
         {
-                "node_ids": [26337594],
+                "node_ids": [94687105],
                 "tags": {"bus": "no"},
                 "note": "Buses must access via Arrivals, not Departures"
         },
@@ -69,7 +69,7 @@
                 "tags": {"oneway": "no"}
         },
         {
-                "way_ids": [82078763],
+                "way_ids": [82078763, 26337594],
                 "tags": {"highway": "motorway_junction"}
         }
 ]
