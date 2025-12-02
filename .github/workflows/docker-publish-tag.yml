@@ -117,7 +117,7 @@ jobs:
           context: .
           file: tagged.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }},${{ env.TAG }}
+          tags: ${{ env.TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
