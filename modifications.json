@@ -80,5 +80,9 @@
         {
                 "way_ids": [1126814304, 790466481],
                 "tags": {"name": "Sandgate Road On-ramp", "destination": "City", "destination:ref" :"26"}
+        },
+        {
+                "way_ids": [32837538],
+                "tags": {"destination:forward": "Ernie's Roundabout"}
         }
 ]
