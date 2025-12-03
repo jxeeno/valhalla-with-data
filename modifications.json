@@ -73,8 +73,8 @@
                 "tags": {"highway": "motorway_junction"}
         },
         {
-                "way_ids": [377084201, 899871429, 377084200],
-                "tags": {"junction": "circular"},
+                "way_ids": [377084201, 899871429, 377084200, 106864649],
+                "tags": {"junction": "roundabout", "highway": "trunk", "name": "Ernies Roundabout"},
                 "note": "Issue 27, Ernies roundabout no nav instructions"
         },
         {
@@ -82,20 +82,27 @@
                 "tags": {"name": "Sandgate Road On-ramp", "destination": "City", "destination:ref" :"26"}
         },
         {
-                "way_ids": [32837538, 342871834],
-                "tags": {"highway": "motorway_link"}
-        },
-        {
-                "way_ids": [106864651, 106864649],
-                "tags": {"destination": "Royal Brisbane and Women's Hospital", "highway": "motorway_link", "name": ""}
-        },
-        {
                 "way_ids": [106864657],
-                "tags": {"destination": "Butterfield Street", "highway": "motorway_link", "name": ""}
+                "tags": {"destination": "Butterfield Street", "highway": "trunk_link", "name": "Butterfield Street On-ramp", "access": "no", "bus": "designated"}
         },
         {
                 "way_ids": [25505541],
                 "tags": {"name": "Taigum Interchange Service Road"},
                 "note": "Issue 59, Taigum Interchange Service Road not named"
+        },
+        {
+                "way_ids": [38466924, 342871834],
+                "tags": {"highway": "secondary", "access": "no", "bus": "designated"},
+                "note": "Issue 30, construct as secondary link to Federation Street"
+        },
+        {
+                "way_ids": [32837538, 32837622, 899871427, 106864651],
+                "tags": {"highway": "trunk_link", "access": "no", "bus": "designated", "name": "Ernies Roundabout Ramp"},
+                "note": "Issue 30, construct off-ramp to Ernies roundabout as a trunk link"
+        },
+        {
+                "way_ids": [899871428, 766218375, 899871427, 106864657, 32837753, 899879627, 32837762],
+                "tags": {"highway": "trunk_link", "access": "no", "bus": "designated", "name": "Ernies Roundabout Access Road"},
+                "note": "Issue 30, construct access road to Ernies roundabout as a trunk link"
         }
 ]
