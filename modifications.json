@@ -104,5 +104,10 @@
                 "way_ids": [899871428, 766218375, 899871427, 106864657, 32837753, 899879627, 32837762],
                 "tags": {"highway": "trunk_link", "access": "no", "bus": "designated", "name": "Ernies Roundabout Access Road"},
                 "note": "Issue 30, construct access road to Ernies roundabout as a trunk link"
+        },
+        {
+                "way_ids": [1455444818, 1167872828, 1167872830],
+                "tags": {"highway": "trunk_link", "access": "no", "bus": "designated", "name": "Adelaide Street Tunnel"},
+                "note": "Issue 27, improve calling of Adelaide St Tunnel"
         }
 ]
