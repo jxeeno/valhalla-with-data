@@ -139,5 +139,12 @@
                 ],
                 "tags": {"highway": "trunk_link", "access": "no", "bus": "designated", "name": ""},
                 "note": "Issue 48, improve priority of primary route"
+        },
+        {
+                "way_ids": [
+                        36985036
+                ],
+                "tags": {"name": "Sandgate Bus Station"},
+                "note": "Issue 49, improve guidance to Sandgate Bus Station"
         }
 ]
