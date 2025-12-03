@@ -109,5 +109,28 @@
                 "way_ids": [1455444818, 1167872828, 1167872830],
                 "tags": {"highway": "trunk_link", "access": "no", "bus": "designated", "name": "Adelaide Street Tunnel"},
                 "note": "Issue 27, improve calling of Adelaide St Tunnel"
+        },
+        {
+                "way_ids": [
+                        273239320,
+                        64143001,
+                        23631400,
+                        10210615
+                ],
+                "tags": {"highway": "trunk", "access": "no", "bus": "designated", "name": "Inner Northern Busway"},
+                "note": "Issue 48, improve priority of primary route"
+        },
+        {
+                "way_ids": [
+                        9859054,
+                        23631180,
+                        312190642,
+                        273239323,
+                        1238809982,
+                        23631363,
+                        1238809976
+                ],
+                "tags": {"highway": "trunk_link", "access": "no", "bus": "designated", "name": ""},
+                "note": "Issue 48, improve priority of primary route"
         }
 ]
