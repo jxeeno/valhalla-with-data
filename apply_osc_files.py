@@ -87,6 +87,7 @@ def apply_change_file_with_osmium(input_pbf, output_pbf, file_type, change_file)
             input_pbf,
             change_file,
             '-f', 'pbf',
+            '--overwrite',
             '-o', output_pbf
         ]
     elif file_type in ('osm', 'opl'):
@@ -96,6 +97,7 @@ def apply_change_file_with_osmium(input_pbf, output_pbf, file_type, change_file)
             input_pbf,
             change_file,
             '-f', 'pbf',
+            '--overwrite',
             '-o', output_pbf
         ]
     else:
