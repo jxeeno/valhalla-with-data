@@ -6,8 +6,9 @@
 # 1. Fetch/download OSM extract (PBF)
 # 2. Apply change files (.osc, .osm, .opl) from osc_files/ (if any exist)
 # 3. Apply tag overrides from modifications.json
-# 4. Build Valhalla tiles
-# 5. Prepare custom_files directory for Docker build
+# 4. Remove state road tags (network= and ref=) for highway ways with network=AU:QLD:S
+# 5. Build Valhalla tiles
+# 6. Prepare custom_files directory for Docker build
 #
 # Usage:
 #   ./build_valhalla_data.sh [input_pbf] [output_pbf]
@@ -160,7 +161,22 @@ apply_tag_overrides() {
     fi
 }
 
-# Step 4: Build Valhalla tiles
+# Step 4: Remove state road tags
+remove_state_road_tags() {
+    local input_pbf="$1"
+    local output_pbf="$2"
+    
+    log_info "Removing state road tags (network= and ref=) for highway ways with network=AU:QLD:S..."
+    
+    if python3 remove_state_road_tags.py "$input_pbf" "$output_pbf"; then
+        log_info "State road tags removed successfully"
+    else
+        log_error "Failed to remove state road tags"
+        exit 1
+    fi
+}
+
+# Step 5: Build Valhalla tiles
 build_valhalla_tiles() {
     local pbf_file="$1"
     
@@ -187,7 +203,7 @@ build_valhalla_tiles() {
     fi
 }
 
-# Step 5: Update Valhalla config (optional)
+# Step 6: Update Valhalla config (optional)
 update_valhalla_config() {
     if ! command -v jq &> /dev/null; then
         log_warn "jq not available, skipping config updates"
@@ -230,6 +246,7 @@ main() {
     # Create temporary files for processing pipeline
     local after_osc="after_osc.pbf"
     local after_tags="after_tags.pbf"
+    local after_state_road_cleanup="after_state_road_cleanup.pbf"
     
     # Step 2: Apply change files (.osc, .osm, .opl)
     apply_change_files "$base_pbf" "$after_osc"
@@ -237,10 +254,13 @@ main() {
     # Step 3: Apply tag overrides
     apply_tag_overrides "$after_osc" "$after_tags"
     
-    # Step 4: Build Valhalla tiles
-    build_valhalla_tiles "$after_tags"
+    # Step 4: Remove state road tags
+    remove_state_road_tags "$after_tags" "$after_state_road_cleanup"
     
-    # Step 5: Update config
+    # Step 5: Build Valhalla tiles
+    build_valhalla_tiles "$after_state_road_cleanup"
+    
+    # Step 6: Update config
     update_valhalla_config
     
     # Cleanup temporary files
@@ -248,7 +268,7 @@ main() {
     if [ "$base_pbf" != "$input_pbf" ] && [[ "$base_pbf" == tmp_* ]]; then
         rm -f "$base_pbf"
     fi
-    rm -f "$after_osc" "$after_tags"
+    rm -f "$after_osc" "$after_tags" "$after_state_road_cleanup"
     
     log_info "========================================"
     log_info "Build process completed successfully!"
@@ -256,7 +276,7 @@ main() {
     
     if [ -n "$final_output" ]; then
         log_info "Copying final PBF to: $final_output"
-        cp "$CUSTOM_FILES_DIR/$(basename $after_tags)" "$final_output"
+        cp "$CUSTOM_FILES_DIR/$(basename $after_state_road_cleanup)" "$final_output"
     fi
 }
 
