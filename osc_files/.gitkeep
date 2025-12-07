@@ -1,0 +1,8 @@
+# Place your change files here (.osc, .osm, .opl)
+# Change files exported from JOSM or other OSM editors can be placed in this directory
+# Supported formats:
+#   - .osc files: OpenStreetMap Change files (create/modify/delete operations)
+#   - .osm files: Full OSM data files (complete OSM elements)
+#   - .opl files: OSM Protocol format (compact text-based)
+# Files will be applied to the OSM extract in alphabetical order
+

@@ -22,7 +22,10 @@ on:
     paths:
       - 'tagged.Dockerfile'
       - 'apply_tag_overrides.py'
+      - 'apply_osc_files.py'
+      - 'build_valhalla_data.sh'
       - 'modifications.json'
+      - 'osc_files/**'
       - '.github/workflows/docker-publish-tag.yml'
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
@@ -65,29 +68,30 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
 
+      - name: Install dependencies
+        run: |
+          pip install osmium
+          sudo apt-get update
+          sudo apt-get install -y osmium-tool jq curl
+
+      - name: Initialize modifications from Gist
+        env:
+          MODIFICATIONS_GIST_URL: ${{ secrets.MODIFICATIONS_GIST_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "$MODIFICATIONS_GIST_URL" ]; then
+            chmod +x init_modifications.sh
+            ./init_modifications.sh
+          else
+            echo "MODIFICATIONS_GIST_URL not set, skipping modification initialization"
+            echo "Using existing modifications.json and osc_files/ if present"
+          fi
+
       - name: Build Valhalla data
         run: |
-          mkdir custom_files
-          echo "Fetch PBF from Geofabrik"
-          curl -L -v -H "User-Agent: valhalla-with-data/1.0" "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf" > tmp.osm.pbf
-          if [ $(stat -c%s "tmp.osm.pbf") -lt 524288 ]; then
-            echo "tmp.osm.pbf is less than 512KB, outputting contents:"
-            cat tmp.osm.pbf
-          fi
-          pip install osmium
-          python apply_tag_overrides.py tmp.osm.pbf out.osm.pbf modifications.json
-          mv out.osm.pbf custom_files/australia-latest.osm.pbf
-          docker run -v $PWD/custom_files:/custom_files -e serve_tiles=False ghcr.io/valhalla/valhalla-scripted:${{ env.TAG }}
-          ls -l custom_files
-          sudo rm -rf custom_files/valhalla_tiles
-          echo "Before updating config...\n\n"
-          cat custom_files/valhalla.json
-          jq '.service_limits.trace.max_distance = 500000' custom_files/valhalla.json > /tmp/valhalla.json
-          sudo mv /tmp/valhalla.json custom_files/valhalla.json
-          jq '.service_limits.trace.max_shape = 32000' custom_files/valhalla.json > /tmp/valhalla.json
-          sudo mv /tmp/valhalla.json custom_files/valhalla.json
-          echo "After updating config...\n\n"
-          cat custom_files/valhalla.json
+          chmod +x build_valhalla_data.sh
+          export VALHALLA_IMAGE="ghcr.io/valhalla/valhalla-scripted:${{ env.TAG }}"
+          ./build_valhalla_data.sh
           ls -l custom_files
 
       # Login against a Docker registry except on PR

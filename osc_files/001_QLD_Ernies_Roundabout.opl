@@ -1,0 +1,68 @@
+-n7156298040 v2 dV c0 t i0 u T x153.0291369 y-27.4457328
++n7156298040 v2 dV c0 t i0 u Thighway=motorway_junction x153.0290823 y-27.4455168
+-n7156298085 v1 dV c0 t i0 u T x153.0291344 y-27.4453207
++n7156298085 v1 dV c0 t i0 u T x153.029183 y-27.4453251
+-n7156298117 v1 dV c0 t i0 u T x153.0293427 y-27.4445865
++n7156298117 v1 dV c0 t i0 u T x153.0294524 y-27.4445924
+-n7156298143 v1 dV c0 t i0 u T x153.0291461 y-27.4452042
++n7156298143 v1 dV c0 t i0 u T x153.0291964 y-27.4452161
+-n7156298154 v2 dV c0 t i0 u T x153.0290313 y-27.4452507
++n7156298154 v2 dV c0 t i0 u T x153.0289876 y-27.4452328
+-n7156298165 v1 dV c0 t i0 u T x153.0292326 y-27.4446202
++n7156298165 v1 dV c0 t i0 u T x153.0292218 y-27.444619
+-n7156298170 v1 dV c0 t i0 u T x153.0291393 y-27.4452624
++n7156298170 v1 dV c0 t i0 u T x153.0291896 y-27.4452668
+-n7156298180 v1 dV c0 t i0 u T x153.0293893 y-27.4445304
++n7156298180 v1 dV c0 t i0 u T x153.0293968 y-27.444508
+-n7156298206 v1 dV c0 t i0 u T x153.0293698 y-27.444561
++n7156298206 v1 dV c0 t i0 u T x153.0293958 y-27.4445185
+-n7156298234 v2 dV c118425427 t2022-03-13T11:12:21Z i12732126 uScottie0001 Thighway=traffic_signals,traffic_signals:direction=forward x153.0291316 y-27.4455645
++n7156298234 v2 dV c118425427 t2022-03-13T11:12:21Z i12732126 uScottie0001 Thighway=traffic_signals,traffic_signals:direction=forward x153.0291534 y-27.4454628
+-n7156298248 v1 dV c0 t i0 u T x153.0292378 y-27.4446324
++n7156298248 v1 dV c0 t i0 u T x153.0292203 y-27.4446424
+-n7156298262 v1 dV c0 t i0 u T x153.0291251 y-27.4445806
++n7156298262 v1 dV c0 t i0 u Thighway=primary x153.0291251 y-27.4445806
+-n7156298271 v3 dV c0 t i0 u T x153.0290255 y-27.4454248
++n7156298271 v3 dV c0 t i0 u T x153.028981 y-27.4453979
+-n7156298295 v1 dV c0 t i0 u T x153.029272 y-27.444617
++n7156298295 v1 dV c0 t i0 u T x153.0292315 y-27.4446201
+-n7156298351 v2 dV c0 t i0 u T x153.0291315 y-27.4454461
++n7156298351 v2 dV c0 t i0 u T x153.029181 y-27.445385
+-n7156298417 v2 dV c118425427 t2022-03-13T11:12:21Z i12732126 uScottie0001 Thighway=traffic_signals,traffic_signals:direction=backward x153.0290224 y-27.4453685
++n7156298417 v2 dV c118425427 t2022-03-13T11:12:21Z i12732126 uScottie0001 Thighway=traffic_signals,traffic_signals:direction=backward x153.0289787 y-27.4453342
+-n9574806963 v2 dV c0 t i0 u T x153.0290508 y-27.4455316
++n9574806963 v2 dV c0 t i0 u T x153.0290147 y-27.4454835
+-n12053388089 v1 dV c0 t i0 u T x153.0290349 y-27.4454799
++n12053388089 v1 dV c0 t i0 u T x153.0289954 y-27.4454396
+-w32837538 v19 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,access=no,surface=paved,maxspeed=50,emergency=yes,busway=yes,layer=1,oneway=no,psv=designated,covered=no,name=Northern%20%Busway,bridge=yes,highway=busway Nn7156298040,n9574806963,n12053388089,n7156298271,n7156298417,n7156298154,n7156298249
++w32837538 v19 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,access=no,surface=paved,maxspeed=50,emergency=yes,busway=yes,layer=1,oneway=no,psv=designated,covered=no,name=Ramp,bridge=yes,highway=primary Nn7156298040,n9574806963,n12053388089,n7156298271,n7156298417,n7156298154,n7156298249
+-w32837622 v17 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298249,n7156298194
++w32837622 v17 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Ramp,emergency=yes,highway=primary,busway=yes,oneway=yes Nn7156298249,n7156298194
+-w32837753 v21 dV c172377329 t2025-09-24T07:01:05Z i12732126 uScottie0001 Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=no Nn7156298288,n7156298241,n7156298018
++w32837753 v21 dV c172377329 t2025-09-24T07:01:05Z i12732126 uScottie0001 Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway%20%Access%20%Road,emergency=yes,highway=service,busway=yes,oneway=no Nn7156298288,n7156298241,n7156298018
+-w32837762 v14 dV c172377329 t2025-09-24T07:01:05Z i12732126 uScottie0001 Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=no Nn369933301,n369933314
++w32837762 v14 dV c172377329 t2025-09-24T07:01:05Z i12732126 uScottie0001 Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway%20%Access%20%Road,emergency=yes,highway=service,busway=yes,oneway=no Nn369933301,n369933314
+-w38466924 v18 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,access=no,surface=paved,maxspeed=50,emergency=yes,busway=yes,layer=1,oneway=no,psv=designated,covered=no,name=Northern%20%Busway,bridge=yes,highway=busway Nn7156298040,n7156298283,n12053388088,n7156298086,n7156298385,n7156298320,n7156298191,n7156298410,n7156298102
++w38466924 v18 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,access=no,surface=paved,maxspeed=50,emergency=yes,busway=yes,layer=1,oneway=no,psv=designated,covered=no,name=Northern%20%Busway,bridge=yes,highway=motorway Nn7156298040,n7156298283,n12053388088,n7156298086,n7156298385,n7156298320,n7156298191,n7156298410,n7156298102
+-w106864649 v18 dV c155448453 t2024-08-19T08:35:15Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298117,n7156298378,n7156298295
++w106864649 v18 dV c155448453 t2024-08-19T08:35:15Z i14894757 uOzAndyP Tjunction=roundabout,bus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Ernie's%20%Roundabout,emergency=yes,highway=primary,busway=yes,oneway=yes Nn7156298117,n7156298378,n7156298295
+-w106864651 v11 dV c156372915 t2024-09-09T00:47:46Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298295,n7156298248,n7156298368
++w106864651 v11 dV c156372915 t2024-09-09T00:47:46Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=primary,busway=yes,oneway=yes Nn7156298295,n7156298248,n7156298368
+-w106864657 v13 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298117,n7156298288
++w106864657 v13 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway%20%Access%20%Road,emergency=yes,highway=service,busway=yes,oneway=yes Nn7156298117,n7156298288
+-w342871834 v14 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,access=no,surface=paved,maxspeed=50,emergency=yes,busway=yes,layer=1,oneway=no,psv=designated,covered=no,name=Northern%20%Busway,bridge=yes,highway=busway Nn663610454,n7156298422,n7156298339,n7156298208,n7156298105,n7156298120,n7156298380,n7156298296,n7156298407,n7156298129,n7156298190,n7156298318,n7156298401,n7156298373,n7156298072,n7156298034,n7156298199,n7156298290,n7156298413,n7156298109,n7156298245,n7156298326,n7156298306,n7156298143,n7156298170,n7156298085,n7156298351,n7156298234,n7156298040
++w342871834 v14 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,access=no,surface=paved,maxspeed=50,emergency=yes,busway=yes,layer=1,oneway=no,psv=designated,covered=no,name=Bridge,bridge=yes,highway=trunk Nn663610454,n7156298422,n7156298339,n7156298208,n7156298105,n7156298120,n7156298380,n7156298296,n7156298407,n7156298129,n7156298190,n7156298318,n7156298401,n7156298373,n7156298072,n7156298034,n7156298199,n7156298290,n7156298413,n7156298109,n7156298245,n7156298326,n7156298306,n7156298143,n7156298170,n7156298085,n7156298351,n7156298234,n7156298040
+-w377084200 v14 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298194,n7156298067,n7156298331,n7156298370,n7156298251,n7156298157,n7156298419,n7156298337,n7156298257,n7156298159,n7156298424,n7156298343,n7156298215,n7156298126,n7156298386,n7156298091,n7156298180,n7156298206,n7156298117
++w377084200 v14 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tjunction=roundabout,bus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Ernie's%20%Roundabout,emergency=yes,highway=primary,busway=yes,oneway=yes Nn7156298194,n7156298067,n7156298331,n7156298370,n7156298251,n7156298157,n7156298419,n7156298337,n7156298257,n7156298159,n7156298424,n7156298343,n7156298215,n7156298126,n7156298386,n7156298091,n7156298180,n7156298206,n7156298117
+-w377084201 v15 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=permit,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298295,n7156298165,n7156298081,n7156298348
++w377084201 v15 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tjunction=roundabout,bus=permit,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=primary,busway=yes,oneway=yes Nn7156298295,n7156298165,n7156298081,n7156298348
+-w766218375 v11 dV c155448453 t2024-08-19T08:35:15Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298288,n7156298158,n7156298371,n7156298069,n7156298368
++w766218375 v11 dV c155448453 t2024-08-19T08:35:15Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway%20%Access%20%Road,emergency=yes,highway=service,busway=yes,oneway=yes Nn7156298288,n7156298158,n7156298371,n7156298069,n7156298368
+-w899871427 v11 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298368,n7156298064,n7156298416,n7156298192,n7156298282,n7156298249
++w899871427 v11 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Ramp,emergency=yes,highway=primary,busway=yes,oneway=yes Nn7156298368,n7156298064,n7156298416,n7156298192,n7156298282,n7156298249
+-w899871428 v9 dV c155448453 t2024-08-19T08:35:15Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298368,n7156298041,n7156298348
++w899871428 v9 dV c155448453 t2024-08-19T08:35:15Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=service,busway=yes,oneway=yes Nn7156298368,n7156298041,n7156298348
+-w899871429 v9 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=yes Nn7156298348,n7156298262,n7156298285,n7156298194
++w899871429 v9 dV c154548767 t2024-07-29T07:22:47Z i14894757 uOzAndyP Tjunction=roundabout,bus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Ernie's%20%Roundabout,emergency=yes,highway=primary,busway=yes,oneway=yes Nn7156298348,n7156298262,n7156298285,n7156298194
+-w899879627 v12 dV c172377329 t2025-09-24T07:01:05Z i12732126 uScottie0001 Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway,emergency=yes,highway=busway,busway=yes,oneway=no Nn7156298018,n7156298020,n11772978200,n369933314
++w899879627 v12 dV c172377329 t2025-09-24T07:01:05Z i12732126 uScottie0001 Tbus=designated,psv=designated,access=no,surface=paved,covered=no,maxspeed=50,name=Northern%20%Busway%20%Access%20%Road,emergency=yes,highway=service,busway=yes,oneway=no Nn7156298018,n7156298020,n11772978200,n369933314
