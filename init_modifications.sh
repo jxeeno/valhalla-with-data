@@ -67,23 +67,12 @@ trap "rm -rf $TEMP_DIR" EXIT
 log_info "Fetching Gist metadata..."
 GIST_API_URL="https://api.github.com/gists/$GIST_ID"
 
-# Use GitHub token if available (for private Gists or rate limiting)
-if [ -n "$GITHUB_TOKEN" ]; then
-    log_info "Using GITHUB_TOKEN for authentication"
-    GIST_JSON=$(curl -s -f -H "Authorization: token $GITHUB_TOKEN" "$GIST_API_URL" || {
-        log_error "Failed to fetch Gist. Check that:"
-        log_error "  1. The Gist ID is correct: $GIST_ID"
-        log_error "  2. The Gist is accessible with the provided token"
-        exit 1
-    })
-else
-    GIST_JSON=$(curl -s -f "$GIST_API_URL" || {
-        log_error "Failed to fetch Gist. Check that:"
-        log_error "  1. The Gist ID is correct: $GIST_ID"
-        log_error "  2. The Gist is public or set GITHUB_TOKEN for private Gists"
-        exit 1
-    })
-fi
+GIST_JSON=$(curl -s -f "$GIST_API_URL" || {
+    log_error "Failed to fetch Gist. Check that:"
+    log_error "  1. The Gist ID is correct: $GIST_ID"
+    log_error "  2. The Gist is public (private Gists are not supported without authentication)"
+    exit 1
+})
 
 # Check if we got valid JSON
 if ! echo "$GIST_JSON" | jq -e . > /dev/null 2>&1; then

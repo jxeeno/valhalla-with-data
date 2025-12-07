@@ -46,19 +46,12 @@ Modification files (`modifications.json` and change files in `osc_files/`) are f
      export MODIFICATIONS_GIST_URL="gist_id"
      ```
 
-3. **Authentication** (for private Gists):
-   - GitHub Actions: Automatically uses `GITHUB_TOKEN` (no action needed)
-   - Local builds: Set `GITHUB_TOKEN` environment variable:
-     ```bash
-     export GITHUB_TOKEN="your_github_token"
-     ```
-
-4. **Initialize modifications** before building:
+3. **Initialize modifications** before building:
    ```bash
    ./init_modifications.sh
    ```
 
-The Gist can be public or private. For private Gists, ensure your GitHub token has access. GitHub Actions automatically has access via `GITHUB_TOKEN`.
+**Note**: The Gist must be **public** to be accessible without authentication. Private Gists are not supported.
 
 ## Prerequisites
 

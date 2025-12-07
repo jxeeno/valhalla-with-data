@@ -77,7 +77,6 @@ jobs:
       - name: Initialize modifications from Gist
         env:
           MODIFICATIONS_GIST_URL: ${{ secrets.MODIFICATIONS_GIST_URL }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -n "$MODIFICATIONS_GIST_URL" ]; then
             chmod +x init_modifications.sh
