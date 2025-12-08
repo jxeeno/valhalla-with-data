@@ -2,8 +2,9 @@
 """
 Remove state road tagging for highway ways with network=AU:QLD:S.
 
-This script removes both network= and ref= tags from highway ways that have
-network=AU:QLD:S.
+This script:
+- Removes both network= and ref= tags from highway ways that have network=AU:QLD:S
+- Deletes all relations that have network=AU:QLD:S
 
 Usage:
     python remove_state_road_tags.py input.pbf output.pbf
@@ -22,10 +23,12 @@ logging.basicConfig(
 MODIFIED_WAYS_COUNT = 0
 TOTAL_WAYS = 0
 TOTAL_HIGHWAY_WAYS = 0
+DELETED_RELATIONS_COUNT = 0
+TOTAL_RELATIONS = 0
 TARGET_NETWORK = 'AU:QLD:S'
 
 class StateRoadTagRemover(osmium.SimpleHandler):
-    """Remove network= and ref= tags from highway ways with network=AU:QLD:S."""
+    """Remove network= and ref= tags from highway ways with network=AU:QLD:S and delete relations with network=AU:QLD:S."""
     
     def __init__(self):
         super().__init__()
@@ -75,14 +78,28 @@ class StateRoadTagRemover(osmium.SimpleHandler):
         self.writer.add_node(n)
 
     def relation(self, r):
-        self.writer.add_relation(r)
+        global DELETED_RELATIONS_COUNT, TOTAL_RELATIONS
+        
+        TOTAL_RELATIONS += 1
+        
+        # Check if this relation has network=AU:QLD:S
+        tags_dict = dict(r.tags)
+        
+        if 'network' in tags_dict and tags_dict['network'] == TARGET_NETWORK:
+            # Skip writing this relation (effectively deleting it)
+            DELETED_RELATIONS_COUNT += 1
+            logging.debug(f"Deleted relation_id={r.id} with network={TARGET_NETWORK}")
+        else:
+            # Write the relation unchanged
+            self.writer.add_relation(r)
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python remove_state_road_tags.py input.pbf output.pbf")
-        print("\nThis script removes network= and ref= tags from highway ways")
-        print(f"that have network={TARGET_NETWORK}.")
+        print("\nThis script:")
+        print(f"  - Removes network= and ref= tags from highway ways with network={TARGET_NETWORK}")
+        print(f"  - Deletes all relations with network={TARGET_NETWORK}")
         sys.exit(1)
 
     input_file = sys.argv[1]
@@ -104,4 +121,6 @@ if __name__ == "__main__":
     logging.info(f"Total ways processed: {TOTAL_WAYS}")
     logging.info(f"Total highway ways: {TOTAL_HIGHWAY_WAYS}")
     logging.info(f"Total ways modified (network and ref tags removed): {MODIFIED_WAYS_COUNT}")
+    logging.info(f"Total relations processed: {TOTAL_RELATIONS}")
+    logging.info(f"Total relations deleted (network={TARGET_NETWORK}): {DELETED_RELATIONS_COUNT}")
 
