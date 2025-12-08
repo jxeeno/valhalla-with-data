@@ -24,6 +24,7 @@ on:
       - 'apply_tag_overrides.py'
       - 'apply_osc_files.py'
       - 'build_valhalla_data.sh'
+      - 'remove_state_road_tags.py'
       - 'modifications.json'
       - 'osc_files/**'
       - '.github/workflows/docker-publish.yml'
