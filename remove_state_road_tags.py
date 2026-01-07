@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Remove state road tagging for highway ways with network=AU:QLD:S.
+Remove state road tagging for highway ways with network=AU:QLD:S or AU:QLD:MR.
 
 This script:
-- Removes AU:QLD:S entries from network= tags (handles semicolon-delimited lists)
-- Removes corresponding ref= entries (handles semicolon-delimited lists, preserves non-AU:QLD:S refs)
+- Removes AU:QLD:S and AU:QLD:MR entries from network= tags (handles semicolon-delimited lists)
+- Removes corresponding ref= entries (handles semicolon-delimited lists, preserves other refs)
 - Removes destination:ref= tags from highway ways if the value is numeric-only (regardless of network)
-- Deletes all relations that have network=AU:QLD:S (handles semicolon-delimited lists)
+- Deletes all relations that have network=AU:QLD:S or AU:QLD:MR (handles semicolon-delimited lists)
 
 Usage:
     python remove_state_road_tags.py input.pbf output.pbf
@@ -28,7 +28,7 @@ TOTAL_WAYS = 0
 TOTAL_HIGHWAY_WAYS = 0
 DELETED_RELATIONS_COUNT = 0
 TOTAL_RELATIONS = 0
-TARGET_NETWORK = 'AU:QLD:S'
+TARGET_NETWORKS = ['AU:QLD:S', 'AU:QLD:MR']
 
 def is_numeric_only(value):
     """Check if a string contains only numeric characters (digits)."""
@@ -46,7 +46,7 @@ def join_semicolon_list(items):
 
 def remove_target_network_from_lists(network_value, ref_value):
     """
-    Remove all AU:QLD:S entries from network and corresponding ref entries.
+    Remove all AU:QLD:S and AU:QLD:MR entries from network and corresponding ref entries.
     
     Args:
         network_value: Network tag value (may be semicolon-delimited)
@@ -63,8 +63,8 @@ def remove_target_network_from_lists(network_value, ref_value):
     if not network_list:
         return (network_value, ref_value, False)
     
-    # Find indices to remove (where network == TARGET_NETWORK)
-    indices_to_remove = [i for i, net in enumerate(network_list) if net == TARGET_NETWORK]
+    # Find indices to remove (where network is in TARGET_NETWORKS)
+    indices_to_remove = [i for i, net in enumerate(network_list) if net in TARGET_NETWORKS]
     
     if not indices_to_remove:
         return (network_value, ref_value, False)
@@ -96,7 +96,7 @@ def remove_target_network_from_lists(network_value, ref_value):
     return (new_network_value, new_ref_value, modified)
 
 class StateRoadTagRemover(osmium.SimpleHandler):
-    """Remove AU:QLD:S entries from network/ref tags (handles semicolon-delimited lists), remove numeric-only destination:ref= tags, and delete relations with network=AU:QLD:S."""
+    """Remove AU:QLD:S and AU:QLD:MR entries from network/ref tags (handles semicolon-delimited lists), remove numeric-only destination:ref= tags, and delete relations with these networks."""
     
     def __init__(self):
         super().__init__()
@@ -122,11 +122,11 @@ class StateRoadTagRemover(osmium.SimpleHandler):
             has_highway = True
             TOTAL_HIGHWAY_WAYS += 1
         
-        # Check for network=AU:QLD:S (may be semicolon-delimited)
+        # Check for network=AU:QLD:S or AU:QLD:MR (may be semicolon-delimited)
         network_value = tags_dict.get('network', '')
         if network_value:
             network_list = parse_semicolon_list(network_value)
-            has_target_network = TARGET_NETWORK in network_list
+            has_target_network = any(net in TARGET_NETWORKS for net in network_list)
         else:
             has_target_network = False
         
@@ -200,19 +200,20 @@ class StateRoadTagRemover(osmium.SimpleHandler):
         
         TOTAL_RELATIONS += 1
         
-        # Check if this relation has network=AU:QLD:S (may be semicolon-delimited)
+        # Check if this relation has network=AU:QLD:S or AU:QLD:MR (may be semicolon-delimited)
         tags_dict = dict(r.tags)
         
         network_value = tags_dict.get('network', '')
         has_target_network = False
         if network_value:
             network_list = parse_semicolon_list(network_value)
-            has_target_network = TARGET_NETWORK in network_list
+            has_target_network = any(net in TARGET_NETWORKS for net in network_list)
         
         if has_target_network:
             # Skip writing this relation (effectively deleting it)
             DELETED_RELATIONS_COUNT += 1
-            logging.debug(f"Deleted relation_id={r.id} with network={TARGET_NETWORK}")
+            found_networks = [net for net in network_list if net in TARGET_NETWORKS]
+            logging.debug(f"Deleted relation_id={r.id} with network(s): {', '.join(found_networks)}")
         else:
             # Write the relation unchanged
             self.writer.add_relation(r)
@@ -222,10 +223,10 @@ if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python remove_state_road_tags.py input.pbf output.pbf")
         print("\nThis script:")
-        print(f"  - Removes AU:QLD:S entries from network= tags (handles semicolon-delimited lists)")
-        print(f"  - Removes corresponding ref= entries (preserves non-AU:QLD:S refs)")
+        print(f"  - Removes AU:QLD:S and AU:QLD:MR entries from network= tags (handles semicolon-delimited lists)")
+        print(f"  - Removes corresponding ref= entries (preserves other refs)")
         print(f"  - Removes destination:ref= tags from highway ways if the value is numeric-only (regardless of network)")
-        print(f"  - Deletes all relations with network={TARGET_NETWORK} (handles semicolon-delimited lists)")
+        print(f"  - Deletes all relations with network=AU:QLD:S or AU:QLD:MR (handles semicolon-delimited lists)")
         sys.exit(1)
 
     input_file = sys.argv[1]
@@ -236,7 +237,7 @@ if __name__ == "__main__":
 
     logging.info(f"Processing input file: {input_file}")
     logging.info(f"Output will be written to: {output_file}")
-    logging.info(f"Target network: {TARGET_NETWORK}")
+    logging.info(f"Target networks: {', '.join(TARGET_NETWORKS)}")
 
     try:
         handler.apply_writer(writer)
@@ -246,7 +247,7 @@ if __name__ == "__main__":
 
     logging.info(f"Total ways processed: {TOTAL_WAYS}")
     logging.info(f"Total highway ways: {TOTAL_HIGHWAY_WAYS}")
-    logging.info(f"Total ways modified (network/ref tags removed for network={TARGET_NETWORK}, or numeric-only destination:ref removed): {MODIFIED_WAYS_COUNT}")
+    logging.info(f"Total ways modified (network/ref tags removed for networks {', '.join(TARGET_NETWORKS)}, or numeric-only destination:ref removed): {MODIFIED_WAYS_COUNT}")
     logging.info(f"Total relations processed: {TOTAL_RELATIONS}")
-    logging.info(f"Total relations deleted (network={TARGET_NETWORK}): {DELETED_RELATIONS_COUNT}")
+    logging.info(f"Total relations deleted (networks {', '.join(TARGET_NETWORKS)}): {DELETED_RELATIONS_COUNT}")
 
