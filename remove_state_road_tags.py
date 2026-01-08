@@ -28,7 +28,7 @@ TOTAL_WAYS = 0
 TOTAL_HIGHWAY_WAYS = 0
 DELETED_RELATIONS_COUNT = 0
 TOTAL_RELATIONS = 0
-TARGET_NETWORKS = ['AU:QLD:S', 'AU:QLD:MR']
+TARGET_NETWORKS = ['AU:QLD:S', 'AU:QLD:MR', 'AU:QLD:NR']
 
 def is_numeric_only(value):
     """Check if a string contains only numeric characters (digits)."""
