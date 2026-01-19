@@ -5,7 +5,7 @@ Remove state road tagging for highway ways with network=AU:QLD:S or AU:QLD:MR.
 This script:
 - Removes AU:QLD:S and AU:QLD:MR entries from network= tags (handles semicolon-delimited lists)
 - Removes corresponding ref= entries (handles semicolon-delimited lists, preserves other refs)
-- Removes destination:ref= tags from highway ways if the value is numeric-only (regardless of network)
+- Removes destination:ref= tags from highway ways if the value is numeric-only and destination:ref:network contains target networks
 - Deletes all relations that have network=AU:QLD:S or AU:QLD:MR (handles semicolon-delimited lists)
 
 Usage:
@@ -96,7 +96,7 @@ def remove_target_network_from_lists(network_value, ref_value):
     return (new_network_value, new_ref_value, modified)
 
 class StateRoadTagRemover(osmium.SimpleHandler):
-    """Remove AU:QLD:S and AU:QLD:MR entries from network/ref tags (handles semicolon-delimited lists), remove numeric-only destination:ref= tags, and delete relations with these networks."""
+    """Remove AU:QLD:S and AU:QLD:MR entries from network/ref tags (handles semicolon-delimited lists), remove numeric-only destination:ref= tags when destination:ref:network contains target networks, and delete relations with these networks."""
     
     def __init__(self):
         super().__init__()
@@ -130,11 +130,17 @@ class StateRoadTagRemover(osmium.SimpleHandler):
         else:
             has_target_network = False
         
-        # Check for numeric-only destination:ref (independent of network)
+        # Check for destination:ref with target network in destination:ref:network tag
+        has_numeric_destination_ref = False
         if 'destination:ref' in tags_dict:
             dest_ref_value = tags_dict['destination:ref']
             if is_numeric_only(dest_ref_value):
-                has_numeric_destination_ref = True
+                # Check destination:ref:network tag instead of network= tag
+                dest_ref_network_value = tags_dict.get('destination:ref:network', '')
+                if dest_ref_network_value:
+                    dest_ref_network_list = parse_semicolon_list(dest_ref_network_value)
+                    if any(net in TARGET_NETWORKS for net in dest_ref_network_list):
+                        has_numeric_destination_ref = True
         
         # Remove tags based on conditions
         if has_highway and has_target_network:
@@ -166,7 +172,7 @@ class StateRoadTagRemover(osmium.SimpleHandler):
                     # Some ref entries remain
                     tags_dict['ref'] = new_ref_value
         
-        # Remove numeric-only destination:ref (regardless of network)
+        # Remove numeric-only destination:ref when destination:ref:network contains target networks
         if has_highway and has_numeric_destination_ref:
             if 'destination:ref' in tags_dict:
                 del tags_dict['destination:ref']
@@ -225,7 +231,7 @@ if __name__ == "__main__":
         print("\nThis script:")
         print(f"  - Removes AU:QLD:S and AU:QLD:MR entries from network= tags (handles semicolon-delimited lists)")
         print(f"  - Removes corresponding ref= entries (preserves other refs)")
-        print(f"  - Removes destination:ref= tags from highway ways if the value is numeric-only (regardless of network)")
+        print(f"  - Removes destination:ref= tags from highway ways if the value is numeric-only and destination:ref:network contains target networks")
         print(f"  - Deletes all relations with network=AU:QLD:S or AU:QLD:MR (handles semicolon-delimited lists)")
         sys.exit(1)
 
