@@ -170,11 +170,3 @@ jobs:
         run: |
           aws lightsail get-container-service-deployments --service-name ${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }} | jq --raw-output "[.deployments | .[] | select(.state==\"ACTIVE\")][0]" | jq --raw-output '{containers, publicEndpoint}' > deployment.json
           aws lightsail create-container-service-deployment --service-name ${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }} --cli-input-json file://$(pwd)/deployment.json
-  keepalive-job:
-    name: Keepalive Workflow
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: gautamkrishnar/keepalive-workflow@v2
