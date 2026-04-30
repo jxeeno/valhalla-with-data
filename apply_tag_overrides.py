@@ -11,17 +11,22 @@ logging.basicConfig(
 
 WAY_TAG_OVERRIDES = {}
 NODE_TAG_OVERRIDES = {}
+RELATION_TAG_OVERRIDES = {}
 ALL_TARGET_WAY_IDS = set()
 ALL_TARGET_NODE_IDS = set()
+ALL_TARGET_RELATION_IDS = set()
 FOUND_WAY_IDS = set()
 FOUND_NODE_IDS = set()
+FOUND_RELATION_IDS = set()
 MODIFIED_WAYS_COUNT = 0
 MODIFIED_NODES_COUNT = 0
+MODIFIED_RELATIONS_COUNT = 0
 TOTAL_WAYS = 0
 TOTAL_NODES = 0
+TOTAL_RELATIONS = 0
 
 def load_override_config(json_path):
-    global WAY_TAG_OVERRIDES, NODE_TAG_OVERRIDES, ALL_TARGET_WAY_IDS, ALL_TARGET_NODE_IDS
+    global WAY_TAG_OVERRIDES, NODE_TAG_OVERRIDES, RELATION_TAG_OVERRIDES, ALL_TARGET_WAY_IDS, ALL_TARGET_NODE_IDS, ALL_TARGET_RELATION_IDS
 
     with open(json_path, 'r', encoding='utf-8') as f:
         override_groups = json.load(f)
@@ -29,15 +34,20 @@ def load_override_config(json_path):
     for group in override_groups:
         way_ids = group.get("way_ids", [])
         node_ids = group.get("node_ids", [])
+        relation_ids = group.get("relation_ids", [])
         tags = group.get("tags", {})
-        
+
         for way_id in way_ids:
             WAY_TAG_OVERRIDES[way_id] = tags
             ALL_TARGET_WAY_IDS.add(way_id)
-            
+
         for node_id in node_ids:
             NODE_TAG_OVERRIDES[node_id] = tags
             ALL_TARGET_NODE_IDS.add(node_id)
+
+        for relation_id in relation_ids:
+            RELATION_TAG_OVERRIDES[relation_id] = tags
+            ALL_TARGET_RELATION_IDS.add(relation_id)
 
 class OsmModifier(osmium.SimpleHandler):
     def __init__(self):
@@ -92,12 +102,31 @@ class OsmModifier(osmium.SimpleHandler):
             self.writer.add_node(n)
 
     def relation(self, r):
-        self.writer.add_relation(r)
+        global MODIFIED_RELATIONS_COUNT, TOTAL_RELATIONS, FOUND_RELATION_IDS
+
+        TOTAL_RELATIONS += 1
+        if r.id in RELATION_TAG_OVERRIDES:
+            FOUND_RELATION_IDS.add(r.id)
+            override_tags = RELATION_TAG_OVERRIDES[r.id]
+
+            # Start with original tags
+            tags_dict = dict(r.tags)
+            tags_dict.update(override_tags)
+
+            # Create a new mutable relation and set updated tags
+            new_relation = osmium.osm.mutable.Relation(r)
+            new_relation.tags = [(k, v) for k, v in tags_dict.items()]
+
+            self.writer.add_relation(new_relation)
+            MODIFIED_RELATIONS_COUNT += 1
+            logging.debug(f"Modified relation_id={r.id} with tags {override_tags}")
+        else:
+            self.writer.add_relation(r)
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Usage: python apply_tag_overrides.py input.pbf output.pbf tag_overrides.json")
-        print("Note: tag_overrides.json can contain both 'way_ids' and 'node_ids' arrays for overriding tags")
+        print("Note: tag_overrides.json can contain 'way_ids', 'node_ids', and 'relation_ids' arrays for overriding tags")
         sys.exit(1)
 
     input_file = sys.argv[1]
@@ -114,6 +143,7 @@ if __name__ == "__main__":
     logging.info(f"Loaded tag overrides from: {config_file}")
     logging.info(f"Total target way_ids: {len(ALL_TARGET_WAY_IDS)}")
     logging.info(f"Total target node_ids: {len(ALL_TARGET_NODE_IDS)}")
+    logging.info(f"Total target relation_ids: {len(ALL_TARGET_RELATION_IDS)}")
 
     try:
         handler.apply_writer(writer)
@@ -123,22 +153,32 @@ if __name__ == "__main__":
 
     MISSING_WAY_IDS = ALL_TARGET_WAY_IDS - FOUND_WAY_IDS
     MISSING_NODE_IDS = ALL_TARGET_NODE_IDS - FOUND_NODE_IDS
-    
+    MISSING_RELATION_IDS = ALL_TARGET_RELATION_IDS - FOUND_RELATION_IDS
+
     logging.info(f"Total ways processed: {TOTAL_WAYS}")
     logging.info(f"Total ways modified: {MODIFIED_WAYS_COUNT}")
     logging.info(f"Total nodes processed: {TOTAL_NODES}")
     logging.info(f"Total nodes modified: {MODIFIED_NODES_COUNT}")
-    
+    logging.info(f"Total relations processed: {TOTAL_RELATIONS}")
+    logging.info(f"Total relations modified: {MODIFIED_RELATIONS_COUNT}")
+
     if MISSING_WAY_IDS:
         logging.warning(f"{len(MISSING_WAY_IDS)} way_ids from config not found in input PBF:")
         for wid in sorted(MISSING_WAY_IDS):
             logging.warning(f"  Missing way_id: {wid}")
     else:
         logging.info("All target way_ids were found and modified.")
-        
+
     if MISSING_NODE_IDS:
         logging.warning(f"{len(MISSING_NODE_IDS)} node_ids from config not found in input PBF:")
         for nid in sorted(MISSING_NODE_IDS):
             logging.warning(f"  Missing node_id: {nid}")
     else:
         logging.info("All target node_ids were found and modified.")
+
+    if MISSING_RELATION_IDS:
+        logging.warning(f"{len(MISSING_RELATION_IDS)} relation_ids from config not found in input PBF:")
+        for rid in sorted(MISSING_RELATION_IDS):
+            logging.warning(f"  Missing relation_id: {rid}")
+    else:
+        logging.info("All target relation_ids were found and modified.")
