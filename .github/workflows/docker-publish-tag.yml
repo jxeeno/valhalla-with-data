@@ -88,6 +88,8 @@ jobs:
           fi
 
       - name: Build Valhalla data
+        env:
+          OSM_EXTRACT_URL: ${{ secrets.PBF_SOURCE }}
         run: |
           chmod +x build_valhalla_data.sh
           export VALHALLA_IMAGE="ghcr.io/valhalla/valhalla-scripted:${{ env.TAG }}"

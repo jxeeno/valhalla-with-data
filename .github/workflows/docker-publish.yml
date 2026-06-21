@@ -87,6 +87,8 @@ jobs:
           fi
 
       - name: Build Valhalla data
+        env:
+          OSM_EXTRACT_URL: ${{ secrets.PBF_SOURCE }}
         run: |
           chmod +x build_valhalla_data.sh
           ./build_valhalla_data.sh
