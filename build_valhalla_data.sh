@@ -4,11 +4,12 @@
 #
 # This script orchestrates the complete workflow:
 # 1. Fetch/download OSM extract (PBF)
-# 2. Apply change files (.osc, .osm, .opl) from osc_files/ (if any exist)
-# 3. Apply tag overrides from modifications.json
-# 4. Remove state road tags (network= and ref=) for highway ways with network=AU:QLD:S
-# 5. Build Valhalla tiles
-# 6. Prepare custom_files directory for Docker build
+# 2. Crop the PBF to Geofabrik's Australia boundary (.poly)
+# 3. Apply change files (.osc, .osm, .opl) from osc_files/ (if any exist)
+# 4. Apply tag overrides from modifications.json
+# 5. Remove state road tags (network= and ref=) for highway ways with network=AU:QLD:S
+# 6. Build Valhalla tiles
+# 7. Prepare custom_files directory for Docker build
 #
 # Usage:
 #   ./build_valhalla_data.sh [input_pbf] [output_pbf]
@@ -20,6 +21,13 @@ set -e  # Exit on error
 
 # Configuration
 OSM_EXTRACT_URL="${OSM_EXTRACT_URL:-https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf}"
+# Geofabrik's boundary polygon for the Australia extract. Used to crop broader
+# (e.g. minutely/planet) snapshots down to the same coverage as Geofabrik.
+# australia.poly is committed to the repo and used by default; set
+# GEOFABRIK_POLY_REFRESH=true to (re)download it from GEOFABRIK_POLY_URL.
+GEOFABRIK_POLY_URL="${GEOFABRIK_POLY_URL:-https://download.geofabrik.de/australia-oceania/australia.poly}"
+GEOFABRIK_POLY_FILE="${GEOFABRIK_POLY_FILE:-australia.poly}"
+GEOFABRIK_POLY_REFRESH="${GEOFABRIK_POLY_REFRESH:-false}"
 OSC_DIR="${OSC_DIR:-osc_files}"
 MODIFICATIONS_JSON="${MODIFICATIONS_JSON:-modifications.json}"
 CUSTOM_FILES_DIR="${CUSTOM_FILES_DIR:-custom_files}"
@@ -103,7 +111,48 @@ fetch_osm_extract() {
     fi
 }
 
-# Step 2: Apply change files (.osc, .osm, .opl)
+# Step 2: Crop the PBF to Geofabrik's Australia boundary
+crop_to_australia() {
+    local input_pbf="$1"
+    local output_pbf="$2"
+
+    # Cropping requires osmium-tool
+    if ! command -v osmium &> /dev/null; then
+        log_error "osmium-tool is required to crop the PBF to the Australia boundary."
+        log_error "Install with:"
+        log_error "  - Ubuntu/Debian: sudo apt-get install osmium-tool"
+        log_error "  - macOS: brew install osmium-tool"
+        exit 1
+    fi
+
+    # Prefer the repo-committed boundary polygon; only reach out to Geofabrik if
+    # it's missing or a refresh was explicitly requested.
+    if [ "$GEOFABRIK_POLY_REFRESH" = "true" ] || [ ! -f "$GEOFABRIK_POLY_FILE" ]; then
+        log_info "Downloading Geofabrik Australia boundary: $GEOFABRIK_POLY_URL"
+        if ! curl -L -f -H "User-Agent: valhalla-with-data/1.0" "$GEOFABRIK_POLY_URL" -o "$GEOFABRIK_POLY_FILE"; then
+            log_error "Failed to download boundary polygon from $GEOFABRIK_POLY_URL"
+            [ "$GEOFABRIK_POLY_REFRESH" != "true" ] && rm -f "$GEOFABRIK_POLY_FILE"
+            exit 1
+        fi
+    else
+        log_info "Using repo-local boundary polygon: $GEOFABRIK_POLY_FILE"
+    fi
+
+    log_info "Cropping PBF to Geofabrik Australia coverage using $GEOFABRIK_POLY_FILE..."
+
+    # complete_ways (osmium's default) keeps ways that cross the boundary intact,
+    # which is important for routing continuity along the edges.
+    if osmium extract --overwrite --strategy=complete_ways \
+                      --polygon "$GEOFABRIK_POLY_FILE" \
+                      -o "$output_pbf" "$input_pbf"; then
+        log_info "Cropped PBF written to $output_pbf ($(du -h "$output_pbf" | cut -f1))"
+    else
+        log_error "Failed to crop PBF to Australia boundary"
+        exit 1
+    fi
+}
+
+# Step 3: Apply change files (.osc, .osm, .opl)
 apply_change_files() {
     local input_pbf="$1"
     local output_pbf="$2"
@@ -140,7 +189,7 @@ apply_change_files() {
     fi
 }
 
-# Step 3: Apply tag overrides
+# Step 4: Apply tag overrides
 apply_tag_overrides() {
     local input_pbf="$1"
     local output_pbf="$2"
@@ -161,7 +210,7 @@ apply_tag_overrides() {
     fi
 }
 
-# Step 4: Remove state road tags
+# Step 5: Remove state road tags
 remove_state_road_tags() {
     local input_pbf="$1"
     local output_pbf="$2"
@@ -176,7 +225,7 @@ remove_state_road_tags() {
     fi
 }
 
-# Step 5: Build Valhalla tiles
+# Step 6: Build Valhalla tiles
 build_valhalla_tiles() {
     local pbf_file="$1"
     
@@ -203,7 +252,7 @@ build_valhalla_tiles() {
     fi
 }
 
-# Step 6: Update Valhalla config (optional)
+# Step 7: Update Valhalla config (optional)
 update_valhalla_config() {
     if ! command -v jq &> /dev/null; then
         log_warn "jq not available, skipping config updates"
@@ -242,33 +291,37 @@ main() {
     
     # Step 1: Get OSM extract
     local base_pbf=$(fetch_osm_extract "$input_pbf")
-    
+
     # Create temporary files for processing pipeline
+    local after_crop="after_crop.pbf"
     local after_osc="after_osc.pbf"
     local after_tags="after_tags.pbf"
     local after_state_road_cleanup="after_state_road_cleanup.pbf"
-    
-    # Step 2: Apply change files (.osc, .osm, .opl)
-    apply_change_files "$base_pbf" "$after_osc"
-    
-    # Step 3: Apply tag overrides
+
+    # Step 2: Crop to Geofabrik's Australia boundary
+    crop_to_australia "$base_pbf" "$after_crop"
+
+    # Step 3: Apply change files (.osc, .osm, .opl)
+    apply_change_files "$after_crop" "$after_osc"
+
+    # Step 4: Apply tag overrides
     apply_tag_overrides "$after_osc" "$after_tags"
-    
-    # Step 4: Remove state road tags
+
+    # Step 5: Remove state road tags
     remove_state_road_tags "$after_tags" "$after_state_road_cleanup"
-    
-    # Step 5: Build Valhalla tiles
+
+    # Step 6: Build Valhalla tiles
     build_valhalla_tiles "$after_state_road_cleanup"
-    
-    # Step 6: Update config
+
+    # Step 7: Update config
     update_valhalla_config
-    
+
     # Cleanup temporary files
     log_info "Cleaning up temporary files..."
     if [ "$base_pbf" != "$input_pbf" ] && [[ "$base_pbf" == tmp_* ]]; then
         rm -f "$base_pbf"
     fi
-    rm -f "$after_osc" "$after_tags" "$after_state_road_cleanup"
+    rm -f "$after_crop" "$after_osc" "$after_tags" "$after_state_road_cleanup"
     
     log_info "========================================"
     log_info "Build process completed successfully!"
