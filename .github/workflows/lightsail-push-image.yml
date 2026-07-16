@@ -1,0 +1,95 @@
+name: Push image to Lightsail (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Image variant / target service'
+        required: true
+        default: 'original'
+        type: choice
+        options:
+        - original
+        - v2
+      tag:
+        description: 'Image tag to pull from ghcr.io'
+        required: true
+        default: 'main'
+        type: string
+      label:
+        description: 'Label for the stored Lightsail image'
+        required: true
+        default: 'manual'
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  AWS_REGION: ap-southeast-2
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    steps:
+      - name: Install AWS Client
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install || true
+          aws --version
+          curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "lightsailctl"
+          sudo mv "lightsailctl" "/usr/local/bin/lightsailctl"
+          sudo chmod +x /usr/local/bin/lightsailctl
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve image and service
+        id: target
+        run: |
+          if [ "${{ inputs.variant }}" = "v2" ]; then
+            echo "image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-v2:${{ inputs.tag }}" >> $GITHUB_OUTPUT
+            echo "service=${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }}-next" >> $GITHUB_OUTPUT
+          else
+            echo "image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }}" >> $GITHUB_OUTPUT
+            echo "service=${{ secrets.AWS_LIGHTSAIL_CONTAINER_SVC }}" >> $GITHUB_OUTPUT
+          fi
+      - name: Pull image from ${{ env.REGISTRY }}
+        run: docker pull "${{ steps.target.outputs.image }}"
+      - name: Push image to Lightsail
+        run: |
+          aws lightsail push-container-image \
+            --region ${{ env.AWS_REGION }} \
+            --service-name "${{ steps.target.outputs.service }}" \
+            --label "${{ inputs.label }}" \
+            --image "${{ steps.target.outputs.image }}"
+          IMAGE_REF=$(aws lightsail get-container-images \
+            --region ${{ env.AWS_REGION }} \
+            --service-name "${{ steps.target.outputs.service }}" \
+            | jq --raw-output '.containerImages[0].image')
+          echo "Pushed image reference: $IMAGE_REF"
+          echo "### Pushed to Lightsail" >> $GITHUB_STEP_SUMMARY
+          echo "\`$IMAGE_REF\` on service \`${{ steps.target.outputs.service }}\`" >> $GITHUB_STEP_SUMMARY
+      - name: Clean up old Lightsail images
+        run: |
+          aws lightsail get-container-images \
+            --region ${{ env.AWS_REGION }} \
+            --service-name "${{ steps.target.outputs.service }}" \
+            | jq --raw-output '.containerImages[14:][].image' \
+            | while read -r img; do
+                echo "Deleting old image: $img"
+                aws lightsail delete-container-image \
+                  --region ${{ env.AWS_REGION }} \
+                  --service-name "${{ steps.target.outputs.service }}" \
+                  --image "$img" || true
+              done
